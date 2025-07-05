@@ -40,7 +40,9 @@ Quick start
 
         -h      this menu
 
-        -i      Interactive questions for user password profiling
+        -i      Interactive questions for user password profiling. You can
+                now enter multiple usernames and multiple pet names separated
+                by commas.
 
         -w      Use this option to profile existing dictionary,
                 or WyD.pl output to make some pwnsauce :)
