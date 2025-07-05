@@ -191,6 +191,8 @@ def improve_dictionary(file_to_open):
 
     chars = CONFIG["global"]["chars"]
     years = CONFIG["global"]["years"]
+    if profile.get("gradyear"):
+        years = years + [profile["gradyear"]]
     numfrom = CONFIG["global"]["numfrom"]
     numto = CONFIG["global"]["numto"]
 
@@ -348,6 +350,19 @@ def interactive():
 
     profile["pet"] = input("> Pet's name: ").lower()
     profile["company"] = input("> Company name: ").lower()
+    profile["parent"] = input("> Parent's name: ").lower()
+    parentb = input("> Parent's birthdate (DDMMYYYY): ")
+    while len(parentb) != 0 and len(parentb) != 8:
+        print("\r\n[-] You must enter 8 digits for birthday!")
+        parentb = input("> Parent's birthdate (DDMMYYYY): ")
+    profile["parentb"] = str(parentb)
+    profile["school"] = input("> High school: ").lower()
+    profile["hometown"] = input("> Home town: ").lower()
+    gradyear = input("> Graduation year (YYYY): ")
+    while len(gradyear) != 0 and len(gradyear) != 4:
+        print("\r\n[-] You must enter 4 digits for graduation year!")
+        gradyear = input("> Graduation year (YYYY): ")
+    profile["gradyear"] = str(gradyear)
     print("\r\n")
 
     profile["words"] = [""]
@@ -421,6 +436,14 @@ def generate_wordlist_from_profile(profile):
     kidb_dd = profile["kidb"][:2]
     kidb_mm = profile["kidb"][2:4]
 
+    parentb_yy = profile["parentb"][-2:]
+    parentb_yyy = profile["parentb"][-3:]
+    parentb_yyyy = profile["parentb"][-4:]
+    parentb_xd = profile["parentb"][1:2]
+    parentb_xm = profile["parentb"][3:4]
+    parentb_dd = profile["parentb"][:2]
+    parentb_mm = profile["parentb"][2:4]
+
     # Convert first letters to uppercase...
 
     nameup = profile["name"].title()
@@ -432,11 +455,16 @@ def generate_wordlist_from_profile(profile):
     kidnup = profile["kidn"].title()
     petup = profile["pet"].title()
     companyup = profile["company"].title()
+    parentup = profile["parent"].title()
+    schoolup = profile["school"].title()
+    hometownup = profile["hometown"].title()
 
     wordsup = []
     wordsup = list(map(str.title, profile["words"]))
 
     word = profile["words"] + wordsup
+    word += [profile["school"], schoolup, profile["hometown"], hometownup]
+    word += [profile["parent"], parentup]
 
     # reverse a name
 
@@ -448,6 +476,8 @@ def generate_wordlist_from_profile(profile):
     rev_wifeup = wifeup[::-1]
     rev_kid = profile["kid"][::-1]
     rev_kidup = kidup[::-1]
+    rev_parent = profile["parent"][::-1]
+    rev_parentup = parentup[::-1]
 
     reverse = [
         rev_name,
@@ -458,10 +488,13 @@ def generate_wordlist_from_profile(profile):
         rev_wifeup,
         rev_kid,
         rev_kidup,
+        rev_parent,
+        rev_parentup,
     ]
     rev_n = [rev_name, rev_nameup, rev_nick, rev_nickup]
     rev_w = [rev_wife, rev_wifeup]
     rev_k = [rev_kid, rev_kidup]
+    rev_p = [rev_parent, rev_parentup]
     # Let's do some serious work! This will be a mess of code, but... who cares? :)
 
     # Birthdays combinations
@@ -527,9 +560,35 @@ def generate_wordlist_from_profile(profile):
                     ):
                         kbdss.append(kbds1 + kbds2 + kbds3)
 
+    pbds = [parentb_yy, parentb_yyy, parentb_yyyy, parentb_xd, parentb_xm, parentb_dd, parentb_mm]
+
+    pbdss = []
+
+    for pbds1 in pbds:
+        pbdss.append(pbds1)
+        for pbds2 in pbds:
+            if pbds.index(pbds1) != pbds.index(pbds2):
+                pbdss.append(pbds1 + pbds2)
+                for pbds3 in pbds:
+                    if (
+                        pbds.index(pbds1) != pbds.index(pbds2)
+                        and pbds.index(pbds2) != pbds.index(pbds3)
+                        and pbds.index(pbds1) != pbds.index(pbds3)
+                    ):
+                        pbdss.append(pbds1 + pbds2 + pbds3)
+
                 # string combinations....
 
-    kombinaac = [profile["pet"], petup, profile["company"], companyup]
+    kombinaac = [
+        profile["pet"],
+        petup,
+        profile["company"],
+        companyup,
+        profile["school"],
+        schoolup,
+        profile["hometown"],
+        hometownup,
+    ]
 
     kombina = [
         profile["name"],
@@ -554,6 +613,13 @@ def generate_wordlist_from_profile(profile):
         profile["kidn"],
         kidup,
         kidnup,
+        profile["surname"],
+        surnameup,
+    ]
+
+    kombinap = [
+        profile["parent"],
+        parentup,
         profile["surname"],
         surnameup,
     ]
@@ -585,6 +651,15 @@ def generate_wordlist_from_profile(profile):
             ) != kombinak.index(kombina2.title()):
                 kombinaak.append(kombina1 + kombina2)
 
+    kombinapc = []
+    for kombina1 in kombinap:
+        kombinapc.append(kombina1)
+        for kombina2 in kombinap:
+            if kombinap.index(kombina1) != kombinap.index(kombina2) and kombinap.index(
+                kombina1.title()
+            ) != kombinap.index(kombina2.title()):
+                kombinapc.append(kombina1 + kombina2)
+
     kombi = {}
     kombi[1] = list(komb(kombinaa, bdss))
     kombi[1] += list(komb(kombinaa, bdss, "_"))
@@ -606,6 +681,12 @@ def generate_wordlist_from_profile(profile):
     kombi[9] += list(komb(word, wbdss, "_"))
     kombi[10] = list(komb(word, kbdss))
     kombi[10] += list(komb(word, kbdss, "_"))
+    kombi[22] = list(komb(kombinapc, pbdss))
+    kombi[22] += list(komb(kombinapc, pbdss, "_"))
+    kombi[23] = list(komb(kombinapc, years))
+    kombi[23] += list(komb(kombinapc, years, "_"))
+    kombi[24] = list(komb(word, pbdss))
+    kombi[24] += list(komb(word, pbdss, "_"))
     kombi[11] = list(komb(word, years))
     kombi[11] += list(komb(word, years, "_"))
     kombi[12] = [""]
@@ -629,12 +710,17 @@ def generate_wordlist_from_profile(profile):
     kombi[19] += list(komb(rev_k, kbdss, "_"))
     kombi[20] = list(komb(rev_n, bdss))
     kombi[20] += list(komb(rev_n, bdss, "_"))
+    kombi[26] = list(komb(rev_p, years))
+    kombi[26] += list(komb(rev_p, years, "_"))
+    kombi[25] = list(komb(rev_p, pbdss))
+    kombi[25] += list(komb(rev_p, pbdss, "_"))
     komb001 = [""]
     komb002 = [""]
     komb003 = [""]
     komb004 = [""]
     komb005 = [""]
     komb006 = [""]
+    komb007 = [""]
     if len(profile["spechars"]) > 0:
         komb001 = list(komb(kombinaa, profile["spechars"]))
         komb002 = list(komb(kombinaac, profile["spechars"]))
@@ -642,11 +728,12 @@ def generate_wordlist_from_profile(profile):
         komb004 = list(komb(kombinaak, profile["spechars"]))
         komb005 = list(komb(word, profile["spechars"]))
         komb006 = list(komb(reverse, profile["spechars"]))
+        komb007 = list(komb(kombinapc, profile["spechars"]))
 
     print("[+] Sorting list and removing duplicates...")
 
     komb_unique = {}
-    for i in range(1, 22):
+    for i in range(1, 27):
         komb_unique[i] = list(dict.fromkeys(kombi[i]).keys())
 
     komb_unique01 = list(dict.fromkeys(kombinaa).keys())
@@ -654,26 +741,30 @@ def generate_wordlist_from_profile(profile):
     komb_unique03 = list(dict.fromkeys(kombinaaw).keys())
     komb_unique04 = list(dict.fromkeys(kombinaak).keys())
     komb_unique05 = list(dict.fromkeys(word).keys())
+    komb_unique06 = list(dict.fromkeys(kombinapc).keys())
     komb_unique07 = list(dict.fromkeys(komb001).keys())
     komb_unique08 = list(dict.fromkeys(komb002).keys())
     komb_unique09 = list(dict.fromkeys(komb003).keys())
     komb_unique010 = list(dict.fromkeys(komb004).keys())
     komb_unique011 = list(dict.fromkeys(komb005).keys())
     komb_unique012 = list(dict.fromkeys(komb006).keys())
+    komb_unique013 = list(dict.fromkeys(komb007).keys())
 
     uniqlist = (
         bdss
         + wbdss
         + kbdss
+        + pbdss
         + reverse
         + komb_unique01
         + komb_unique02
         + komb_unique03
         + komb_unique04
         + komb_unique05
+        + komb_unique06
     )
 
-    for i in range(1, 21):
+    for i in range(1, 27):
         uniqlist += komb_unique[i]
 
     uniqlist += (
@@ -683,6 +774,7 @@ def generate_wordlist_from_profile(profile):
         + komb_unique010
         + komb_unique011
         + komb_unique012
+        + komb_unique013
     )
     unique_lista = list(dict.fromkeys(uniqlist).keys())
     unique_leet = []
