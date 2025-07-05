@@ -54,7 +54,8 @@ class TestCupp(unittest.TestCase):
             "kid": "екатерина",
             "kidn": "katerina",
             "kidb": "31081986",
-            "pet": "werny",
+            "pets": ["werny"],
+            "usernames": ["vladimir"],
             "company": "russian federation",
             "words": ["Крим"],
             "spechars1": "y",
@@ -120,6 +121,7 @@ class TestCupp(unittest.TestCase):
             "",  # Middle Name
             "Assange",  # Surname
             "Mendax",  # Nickname
+            "",  # Usernames
             "03071971",  # Birthdate
             "",  # Partner
             "",  # Partner nick
@@ -127,7 +129,7 @@ class TestCupp(unittest.TestCase):
             "",  # Child name
             "",  # Child nick
             "",  # Child birthdate
-            "",  # Pet's name
+            "",  # Pet name(s)
             "",  # Company name
             "",  # Mother's first name
             "",  # Mother's middle name

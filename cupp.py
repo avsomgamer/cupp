@@ -206,6 +206,8 @@ def improve_dictionary(file_to_open):
     profile.setdefault("father_middle", "")
     profile.setdefault("father_surname", "")
     profile.setdefault("fatherb", "")
+    profile.setdefault("usernames", [])
+    profile.setdefault("pets", [])
     profile.setdefault("parent", profile.get("father_name", ""))
     profile.setdefault("parentb", profile.get("fatherb", ""))
 
@@ -336,6 +338,8 @@ def interactive():
     profile["middlename"] = input("> Middle Name: ").lower()
     profile["surname"] = input("> Surname: ").lower()
     profile["nick"] = input("> Nickname: ").lower()
+    usernames_in = input("> Usernames (comma separated): ").lower()
+    profile["usernames"] = [u.strip() for u in usernames_in.split(",") if u.strip()]
     birthdate = input("> Birthdate (DDMMYYYY): ")
     while len(birthdate) != 0 and len(birthdate) != 8:
         print("\r\n[-] You must enter 8 digits for birthday!")
@@ -362,7 +366,8 @@ def interactive():
     profile["kidb"] = str(kidb)
     print("\r\n")
 
-    profile["pet"] = input("> Pet's name: ").lower()
+    pets_in = input("> Pet name(s) (comma separated): ").lower()
+    profile["pets"] = [p.strip() for p in pets_in.split(",") if p.strip()]
     profile["company"] = input("> Company name: ").lower()
     profile["mother_name"] = input("> Mother's first name: ").lower()
     profile["mother_middle"] = input("> Mother's middle name: ").lower()
@@ -492,11 +497,12 @@ def generate_wordlist_from_profile(profile):
     midup = profile["middlename"].title()
     surnameup = profile["surname"].title()
     nickup = profile["nick"].title()
+    usernameups = list(map(str.title, profile["usernames"]))
     wifeup = profile["wife"].title()
     wifenup = profile["wifen"].title()
     kidup = profile["kid"].title()
     kidnup = profile["kidn"].title()
-    petup = profile["pet"].title()
+    petups = list(map(str.title, profile["pets"]))
     companyup = profile["company"].title()
     parentup = profile["parent"].title()
     motherup = profile["mother_name"].title()
@@ -538,6 +544,8 @@ def generate_wordlist_from_profile(profile):
     rev_nameup = nameup[::-1]
     rev_nick = profile["nick"][::-1]
     rev_nickup = nickup[::-1]
+    rev_usernames = [u[::-1] for u in profile["usernames"]]
+    rev_usernameups = [u[::-1] for u in usernameups]
     rev_wife = profile["wife"][::-1]
     rev_wifeup = wifeup[::-1]
     rev_kid = profile["kid"][::-1]
@@ -550,6 +558,8 @@ def generate_wordlist_from_profile(profile):
         rev_nameup,
         rev_nick,
         rev_nickup,
+        *rev_usernames,
+        *rev_usernameups,
         rev_wife,
         rev_wifeup,
         rev_kid,
@@ -557,7 +567,7 @@ def generate_wordlist_from_profile(profile):
         rev_parent,
         rev_parentup,
     ]
-    rev_n = [rev_name, rev_nameup, rev_nick, rev_nickup]
+    rev_n = [rev_name, rev_nameup, rev_nick, rev_nickup] + rev_usernames + rev_usernameups
     rev_w = [rev_wife, rev_wifeup]
     rev_k = [rev_kid, rev_kidup]
     rev_p = [rev_parent, rev_parentup]
@@ -646,8 +656,8 @@ def generate_wordlist_from_profile(profile):
                 # string combinations....
 
     kombinaac = [
-        profile["pet"],
-        petup,
+        *profile["pets"],
+        *petups,
         profile["company"],
         companyup,
         profile["school"],
@@ -660,9 +670,11 @@ def generate_wordlist_from_profile(profile):
         profile["name"],
         profile["surname"],
         profile["nick"],
+        *profile["usernames"],
         nameup,
         surnameup,
         nickup,
+        *usernameups,
     ]
 
     kombinaw = [
