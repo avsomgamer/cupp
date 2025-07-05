@@ -117,6 +117,7 @@ class TestCupp(unittest.TestCase):
 
         user_input = [
             "Julian",  # First Name
+            "",  # Middle Name
             "Assange",  # Surname
             "Mendax",  # Nickname
             "03071971",  # Birthdate
@@ -128,6 +129,17 @@ class TestCupp(unittest.TestCase):
             "",  # Child birthdate
             "",  # Pet's name
             "",  # Company name
+            "",  # Mother's first name
+            "",  # Mother's middle name
+            "",  # Mother's surname
+            "",  # Mother's birthdate
+            "",  # Father's first name
+            "",  # Father's middle name
+            "",  # Father's surname
+            "",  # Father's birthdate
+            "",  # High school
+            "",  # Home town
+            "",  # Graduation year
             "N",  # keywords
             "Y",  # Special chars
             "N",  # Random

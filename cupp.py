@@ -196,6 +196,19 @@ def improve_dictionary(file_to_open):
     numfrom = CONFIG["global"]["numfrom"]
     numto = CONFIG["global"]["numto"]
 
+    # ensure optional fields exist
+    profile.setdefault("middlename", "")
+    profile.setdefault("mother_name", "")
+    profile.setdefault("mother_middle", "")
+    profile.setdefault("mother_surname", "")
+    profile.setdefault("motherb", "")
+    profile.setdefault("father_name", "")
+    profile.setdefault("father_middle", "")
+    profile.setdefault("father_surname", "")
+    profile.setdefault("fatherb", "")
+    profile.setdefault("parent", profile.get("father_name", ""))
+    profile.setdefault("parentb", profile.get("fatherb", ""))
+
     fajl = open(file_to_open, "r")
     listic = fajl.readlines()
     listica = []
@@ -320,6 +333,7 @@ def interactive():
         name = input("> Name: ").lower()
     profile["name"] = str(name)
 
+    profile["middlename"] = input("> Middle Name: ").lower()
     profile["surname"] = input("> Surname: ").lower()
     profile["nick"] = input("> Nickname: ").lower()
     birthdate = input("> Birthdate (DDMMYYYY): ")
@@ -350,12 +364,27 @@ def interactive():
 
     profile["pet"] = input("> Pet's name: ").lower()
     profile["company"] = input("> Company name: ").lower()
-    profile["parent"] = input("> Parent's name: ").lower()
-    parentb = input("> Parent's birthdate (DDMMYYYY): ")
-    while len(parentb) != 0 and len(parentb) != 8:
+    profile["mother_name"] = input("> Mother's first name: ").lower()
+    profile["mother_middle"] = input("> Mother's middle name: ").lower()
+    profile["mother_surname"] = input("> Mother's surname: ").lower()
+    motherb = input("> Mother's birthdate (DDMMYYYY): ")
+    while len(motherb) != 0 and len(motherb) != 8:
         print("\r\n[-] You must enter 8 digits for birthday!")
-        parentb = input("> Parent's birthdate (DDMMYYYY): ")
-    profile["parentb"] = str(parentb)
+        motherb = input("> Mother's birthdate (DDMMYYYY): ")
+    profile["motherb"] = str(motherb)
+
+    profile["father_name"] = input("> Father's first name: ").lower()
+    profile["father_middle"] = input("> Father's middle name: ").lower()
+    profile["father_surname"] = input("> Father's surname: ").lower()
+    fatherb = input("> Father's birthdate (DDMMYYYY): ")
+    while len(fatherb) != 0 and len(fatherb) != 8:
+        print("\r\n[-] You must enter 8 digits for birthday!")
+        fatherb = input("> Father's birthdate (DDMMYYYY): ")
+    profile["fatherb"] = str(fatherb)
+
+    # backward compatible fields
+    profile["parent"] = profile["father_name"]
+    profile["parentb"] = profile["fatherb"]
     profile["school"] = input("> High school: ").lower()
     profile["hometown"] = input("> Home town: ").lower()
     gradyear = input("> Graduation year (YYYY): ")
@@ -395,6 +424,19 @@ def generate_wordlist_from_profile(profile):
     years = CONFIG["global"]["years"]
     numfrom = CONFIG["global"]["numfrom"]
     numto = CONFIG["global"]["numto"]
+
+    # ensure optional fields exist
+    profile.setdefault("middlename", "")
+    profile.setdefault("mother_name", "")
+    profile.setdefault("mother_middle", "")
+    profile.setdefault("mother_surname", "")
+    profile.setdefault("motherb", "")
+    profile.setdefault("father_name", "")
+    profile.setdefault("father_middle", "")
+    profile.setdefault("father_surname", "")
+    profile.setdefault("fatherb", "")
+    profile.setdefault("parent", profile.get("father_name", ""))
+    profile.setdefault("parentb", profile.get("fatherb", ""))
 
     profile["spechars"] = []
 
@@ -447,6 +489,7 @@ def generate_wordlist_from_profile(profile):
     # Convert first letters to uppercase...
 
     nameup = profile["name"].title()
+    midup = profile["middlename"].title()
     surnameup = profile["surname"].title()
     nickup = profile["nick"].title()
     wifeup = profile["wife"].title()
@@ -456,6 +499,12 @@ def generate_wordlist_from_profile(profile):
     petup = profile["pet"].title()
     companyup = profile["company"].title()
     parentup = profile["parent"].title()
+    motherup = profile["mother_name"].title()
+    mothermidup = profile["mother_middle"].title()
+    mothersurnameup = profile["mother_surname"].title()
+    fatherup = profile["father_name"].title()
+    fathermidup = profile["father_middle"].title()
+    fathersurnameup = profile["father_surname"].title()
     schoolup = profile["school"].title()
     hometownup = profile["hometown"].title()
 
@@ -464,7 +513,24 @@ def generate_wordlist_from_profile(profile):
 
     word = profile["words"] + wordsup
     word += [profile["school"], schoolup, profile["hometown"], hometownup]
-    word += [profile["parent"], parentup]
+    word += [
+        profile["parent"],
+        parentup,
+        profile["mother_name"],
+        motherup,
+        profile["mother_middle"],
+        mothermidup,
+        profile["mother_surname"],
+        mothersurnameup,
+        profile["father_name"],
+        fatherup,
+        profile["father_middle"],
+        fathermidup,
+        profile["father_surname"],
+        fathersurnameup,
+        profile["middlename"],
+        midup,
+    ]
 
     # reverse a name
 
